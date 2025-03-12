@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal Finance Overview</title>
+    <link rel="stylesheet" href="../css/personaltracker.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar">
+      <div class="nav-content">
+        <h1>Financial Tools</h1>
+        <ul class="nav-links">
+          <li><a href="home.html">Home</a></li>
+          <li><a href="convertor.html">Currency Converter</a></li>
+          <li><a href="bill_split.html">Bill Splitter</a></li>
+          <li><a href="personaltracker.html">Personal Finance</a></li>
+          <li><a href="savings_planner.html">Savings Planner</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h3 class="fade-in">Enter Your Income</h3>
+      <form id="incomeForm" action="save_finance.php" method="POST">
+        <label for="income">Total Income (₹):</label>
+        <input type="number" id="income" name="income" required min="1" placeholder="Enter your income" />
+        <button type="submit" name="submit_income">Set Income</button>
+      </form>
+    </div>
+
+    <table id="summaryTable" class="fade-in fade-in-left">
+      <tr>
+        <th>Total Income</th>
+        <th>Total Expenses</th>
+        <th>Savings</th>
+      </tr>
+      <tr>
+        <td id="totalIncome">₹0</td>
+        <td id="totalExpenses">₹0</td>
+        <td id="savings">₹0</td>
+      </tr>
+    </table>
+
+    <div class="exp">
+      <div class="exp_breakdown">
+        <h3 class="fade-in fade-in-right">Expenses Breakdown</h3>
+        <table class="fade-in fade-in-right">
+          <tr>
+            <th>Category</th>
+            <th>Amount</th>
+          </tr>
+          <tr>
+            <td>Food</td>
+            <td id="foodExpense">₹0</td>
+          </tr>
+          <tr>
+            <td>Rent</td>
+            <td id="rentExpense">₹0</td>
+          </tr>
+          <tr>
+            <td>Utilities</td>
+            <td id="utilitiesExpense">₹0</td>
+          </tr>
+          <tr>
+            <td>Entertainment</td>
+            <td id="entertainmentExpense">₹0</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="addexp">
+        <h3 class="fade-in">Add Expense</h3>
+        <form id="expenseForm" action="save_finance.php" method="POST">
+          <label for="category">Select Category:</label>
+          <select id="category" name="category" required>
+            <option value="food">Food</option>
+            <option value="rent">Rent</option>
+            <option value="utilities">Utilities</option>
+            <option value="entertainment">Entertainment</option>
+          </select>
+
+          <label for="amount">Amount (in ₹):</label>
+          <input type="number" id="amount" name="amount" required min="1" />
+
+          <label for="reason">Reason:</label>
+          <input type="text" id="reason" name="reason" required placeholder="e.g. Bought burger" />
+
+          <button type="submit" name="submit_expense">Add Expense</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="exp_history">
+      <h3 class="fade-in">Expense History</h3>
+      <table id="historyTable" class="fade-in">
+        <thead>
+          <tr>
+            <th>Rupees</th>
+            <th>Spent On</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody id="historyTableBody">
+          <?php include 'fetch_finance.php'; ?>
+      </tbody>
+      </table>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="expenseChart"></canvas>
+    </div>
+    
+    <br><br>
+    <script>
+      const incomeForm = document.getElementById("incomeForm");
+      const expenseForm = document.getElementById("expenseForm");
+      const totalIncomeEl = document.getElementById("totalIncome");
+      const totalExpensesEl = document.getElementById("totalExpenses");
+      const savingsEl = document.getElementById("savings");
+
+      const foodExpenseEl = document.getElementById("foodExpense");
+      const rentExpenseEl = document.getElementById("rentExpense");
+      const utilitiesExpenseEl = document.getElementById("utilitiesExpense");
+      const entertainmentExpenseEl = document.getElementById("entertainmentExpense");
+
+      const historyTableBody = document.getElementById("historyTableBody");
+
+      let totalIncome = 0;
+      let totalExpenses = 0;
+      let savings = 0;
+
+      let expenses = {
+        food: 0,
+        rent: 0,
+        utilities: 0,
+        entertainment: 0,
+      };
+
+      function formatCurrency(num) {
+        return "₹" + num.toLocaleString("en-IN");
+      }
+
+      const expenseData = {
+        labels: ["Food", "Rent", "Utilities", "Entertainment"],
+        datasets: [
+          {
+            label: "Expenses Breakdown",
+            data: [0, 0, 0, 0], 
+            backgroundColor: [
+              "#4CAF50",
+              "#F44336", 
+              "#FF9800", 
+              "#2196F3",
+            ],
+            borderColor: "#fff",
+            borderWidth: 1,
+          },
+        ],
+      };
+
+      const config = {
+        type: "pie",
+        data: expenseData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: "top",
+            },
+            title: {
+              display: true,
+              text: "Expenses Breakdown",
+            },
+          },
+        },
+      };
+
+      const expensesChart = new Chart(document.getElementById("expenseChart"), config);
+
+      incomeForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        totalIncome = Number(document.getElementById("income").value);
+        totalIncomeEl.textContent = formatCurrency(totalIncome);
+        updateSavings();
+
+        incomeForm.reset();
+      });
+
+      expenseForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const category = document.getElementById("category").value;
+        const amount = Number(document.getElementById("amount").value);
+        const reason = document.getElementById("reason").value;
+
+        expenses[category] += amount;
+        totalExpenses += amount;
+        updateSavings();
+
+        // Update the DOM
+        if (category === "food") {
+          foodExpenseEl.textContent = formatCurrency(expenses.food);
+        } else if (category === "rent") {
+          rentExpenseEl.textContent = formatCurrency(expenses.rent);
+        } else if (category === "utilities") {
+          utilitiesExpenseEl.textContent = formatCurrency(expenses.utilities);
+        } else if (category === "entertainment") {
+          entertainmentExpenseEl.textContent = formatCurrency(expenses.entertainment);
+        }
+
+        // Update total expenses
+        totalExpensesEl.textContent = formatCurrency(totalExpenses);
+
+        // Add to expense history
+        const newRow = historyTableBody.insertRow();
+        const amountCell = newRow.insertCell(0);
+        const categoryCell = newRow.insertCell(1);
+        const reasonCell = newRow.insertCell(2);
+
+        amountCell.textContent = formatCurrency(amount);
+        categoryCell.textContent = capitalizeFirstLetter(category);
+        reasonCell.textContent = reason;
+
+        // Update the chart data
+        expensesChart.data.datasets[0].data = [
+          expenses.food,
+          expenses.rent,
+          expenses.utilities,
+          expenses.entertainment,
+        ];
+        expensesChart.update(); // Refresh the chart
+
+        // Clear form
+        expenseForm.reset();
+      });
+
+      // Function to update savings
+      function updateSavings() {
+        savings = totalIncome - totalExpenses;
+        savingsEl.textContent = formatCurrency(savings);
+      }
+
+      // Function to capitalize first letter
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      }
+
+      // Get reference to the reset button
+      const resetIncomeButton = document.getElementById("resetIncomeButton");
+
+      // Function to reset everything
+      function resetFinanceTracker() {
+        // Reset variables
+        totalIncome = 0;
+        totalExpenses = 0;
+        savings = 0;
+
+        expenses = {
+          food: 0,
+          rent: 0,
+          utilities: 0,
+          entertainment: 0,
+        };
+
+        // Update the DOM
+        totalIncomeEl.textContent = formatCurrency(totalIncome);
+        totalExpensesEl.textContent = formatCurrency(totalExpenses);
+        savingsEl.textContent = formatCurrency(savings);
+
+        foodExpenseEl.textContent = formatCurrency(expenses.food);
+        rentExpenseEl.textContent = formatCurrency(expenses.rent);
+        utilitiesExpenseEl.textContent = formatCurrency(expenses.utilities);
+        entertainmentExpenseEl.textContent = formatCurrency(expenses.entertainment);
+
+        // Clear expense history
+        historyTableBody.innerHTML = "";
+
+        // Reset the chart data
+        expensesChart.data.datasets[0].data = [0, 0, 0, 0];
+        expensesChart.update(); // Refresh the chart
+      }
+
+      // Add event listener to the reset button
+      resetIncomeButton.addEventListener("click", resetFinanceTracker);
+    </script>
+  </body>
+</html>

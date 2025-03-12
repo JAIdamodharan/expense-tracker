@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net Worth Calculator</title>
+    <link rel="stylesheet" href="./css/networth.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+          <h1>Financial Tools</h1>
+          <ul class="nav-links">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="convertor.html">Currency Converter</a></li>
+            <li><a href="bill_split.html">Bill Splitter</a></li>
+            <li><a href="personaltracker.html.html">Personal Finance</a></li>
+            <li><a href="savings_planner.html">Savings Planner</a></li>
+          </ul>
+        </div>
+      </nav>
+    <div class="container">
+        <h1>Net Worth Calculator</h1>
+        <form id="netWorthForm">
+            <div class="form-group">
+                <label for="assets">Total Assets ($):</label>
+                <input type="number" id="assets" placeholder="Enter your total assets">
+            </div>
+            <div class="form-group">
+                <label for="liabilities">Total Liabilities ($):</label>
+                <input type="number" id="liabilities" placeholder="Enter your total liabilities">
+            </div>
+            <button type="submit" class="btn">Calculate Net Worth</button>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
