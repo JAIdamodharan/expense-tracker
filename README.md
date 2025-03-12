@@ -105,18 +105,3 @@ Add screenshots of your dashboard, forms, and tables here.
 Jaishree
 Third-year Software Engineering Student | VIT Vellore
 Passionate about Web Development, AI/ML, and Building Real-world Projects
-
-⸻
-
-📜 License
-
-This project is open-source and free to use under the MIT License.
-
-⸻
-
-💬 Feedback & Contributions
-
-Feel free to fork, suggest improvements, or raise issues.
-Pull requests are welcome. Let’s build better finance tools together! 🚀
-
----
