@@ -22,38 +22,6 @@ A simple web-based personal finance tracker built with **HTML**, **CSS**, **PHP*
 - **Database:** MySQL
 - **Server:** XAMPP / LAMP / WAMP
 
----
-
-## 📁 Project Structure
-
-finance-tracker/
-│
-├── css/
-│   ├── dashboard.css
-│   ├── login.css
-│   └── register.css
-│
-├── images/
-│   └── (icons / illustrations)
-│
-├── pages/
-│   ├── login.html
-│   ├── register.html
-│   └── home.html
-│
-├── php/
-│   ├── dashboard.php
-│   ├── login.php
-│   ├── register.php
-│   ├── logout.php
-│   ├── save_finance.php
-│   └── fetch_finance.php
-│
-├── finance.sql         <– Database file (optional export)
-└── README.md
-
----
-
 ## 📊 Database Schema
 
 ### `users` Table:
