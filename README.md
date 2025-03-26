@@ -62,10 +62,7 @@ http://localhost/personal-finance-tracker/pages/login.html
 
 ⸻
 
-📸 Screenshots (Optional)
-
-Add screenshots of your dashboard, forms, and tables here.
-
+📸 Screenshots 
 ⸻
 
 ✍️ Author
