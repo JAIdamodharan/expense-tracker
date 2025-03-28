@@ -17,5 +17,8 @@
             <img src="../images/background.png" alt="Expense Tracking Image">
         </div>
     </div>
+    <?php
+    header('ngrok-skip-browser-warning: true');
+    ?>
 </body>
 </html>
