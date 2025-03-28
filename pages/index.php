@@ -1,3 +1,6 @@
+<?php
+    header('ngrok-skip-browser-warning: true');
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,8 +20,5 @@
             <img src="../images/background.png" alt="Expense Tracking Image">
         </div>
     </div>
-    <?php
-    header('ngrok-skip-browser-warning: true');
-    ?>
 </body>
 </html>
