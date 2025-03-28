@@ -52,7 +52,7 @@ while ($row = $res->fetch_assoc()) {
 <body>
     <nav class="navbar">
             <div class="nav-content">
-                <h1>Financial Tools</h1>
+                <h1>Expense Tracker</h1>
                 <ul class="nav-links">
                     <li><a href="home.php">Home</a></li>
                     <li><a href="convertor.html">Currency Converter</a></li>

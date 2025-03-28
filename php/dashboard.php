@@ -191,8 +191,7 @@ $conn->close();
         <div class="nav-content">
             <h1>Expense Tracker</h1>
             <ul class="nav-links">
-                <li><a href="../pages/home.html">Home</a></li>
-                <li><a href="dashboard.php">Profile</a></li>
+                <li><a href="../pages/home.php">Home</a></li>
                 <li><a href="logout.php">Logout</a></li>
             </ul>
         </div>
