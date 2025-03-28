@@ -39,7 +39,7 @@ if ($row = $res->fetch_assoc()) {
 <body>
     <div class="main-container">
         <h1 class="welcome-heading">
-            <?= htmlspecialchars($user_name) ?>, Welcome to your 
+            Hi <?= htmlspecialchars($user_name) ?>, Welcome to your 
             <span style="color: #043354">personal finance tracker!</span>
         </h1>
     </div>
