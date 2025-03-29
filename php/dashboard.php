@@ -116,7 +116,7 @@ $conn->close();
             max-width: 1200px; margin: 0 auto; padding: 0 20px;
         }
 
-        .nav-content h1 { font-size: 1.5rem; }
+        .nav-content h1 { font-size: 1rem; }
 
         .nav-links { list-style: none; display: flex; gap: 20px; }
         .nav-links a {
@@ -186,17 +186,20 @@ $conn->close();
     </style>
 </head>
 <body>
-
-    <div class="navbar">
-        <div class="nav-content">
-            <h1>Expense Tracker</h1>
-            <ul class="nav-links">
-                <li><a href="../pages/home.php">Home</a></li>
-                <li><a href="logout.php">Logout</a></li>
-            </ul>
-        </div>
-    </div>
-
+    <nav class="navbar">
+            <div class="nav-content">
+                <h1>Expense Tracker</h1>
+                <ul class="nav-links">
+                    <li><a href="../pages/home.php">Home</a></li>
+                    <li><a href="../pages/convertor.html">Currency Converter</a></li>
+                    <li><a href="../pages/bill_split.html">Bill Splitter</a></li>
+                    <li><a href="../pages/personaltracker.php">Personal Finance</a></li>
+                    <li><a href="../pages/savings_planner.html">Savings Planner</a></li>
+                    <li><a href="dashboard.php">Profile</a></li>
+                    <li><a href="logout.php">Logout</a></li>
+                </ul>
+            </div>
+      </nav>
     <div class="dashboard-container">
         <h2>Welcome, <?php echo htmlspecialchars($name); ?>!</h2><br><br>
         <p><strong>Email:</strong> <?php echo htmlspecialchars($email); ?></p>
