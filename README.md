@@ -58,10 +58,6 @@ git clone https://github.com/yourusername/personal-finance-tracker.git
 
 http://localhost/expense_tracker/pages/login.html
 ⸻
-📸 Screenshots
-<img width="1440" alt="image" src="https://github.com/user-attachments/assets/251c7288-e290-47fa-ac5c-6f7493bfc356" />
-
-⸻
 ✍️ Author
 
 Jaishree
