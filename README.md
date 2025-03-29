@@ -56,7 +56,7 @@ git clone https://github.com/yourusername/personal-finance-tracker.git
 	4.	Start Apache & MySQL via XAMPP/WAMP/LAMP
 	5.	Access in browser:
 
-http://localhost/personal-finance-tracker/pages/login.html
+http://localhost/expense_tracker/pages/login.html
 
 
 
