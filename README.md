@@ -1,4 +1,4 @@
-# 💸 Personal Finance Tracker
+# Personal Finance Tracker
 
 A simple web-based personal finance tracker built with **HTML**, **CSS**, **PHP**, and **MySQL**. This tool helps users manage their income and expenses, track financial history, and maintain budget clarity through a clean and user-friendly dashboard interface.
 
