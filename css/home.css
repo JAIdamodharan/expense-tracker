@@ -185,4 +185,8 @@ body {
         gap: 10px;
         padding-top: 10px;
     }
+
+    .main-container {
+        margin-top: 300px;
+    }
 }

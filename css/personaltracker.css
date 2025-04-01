@@ -6,9 +6,10 @@
 
 body {
   font-family: Arial, sans-serif;
-  margin: 100px;
+  margin: 0;
   background: linear-gradient(to right, #4caf50, #3797db);
-  height: 100vh;
+  min-height: 100vh;
+  padding: 80px 20px 20px;
 }
 
 /* Navbar Styling */
@@ -33,9 +34,10 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 10px;
 }
 
 .nav-content h1 {
@@ -52,13 +54,13 @@ body {
 .nav-title {
   flex: 1;
   text-align: center;
-  font-size: 1.5em;
+  font-size: 1.2em;
   font-weight: bold;
 }
 
 .nav-links {
   display: flex;
-  gap: 15px;
+  gap: 10px;
   list-style: none;
 }
 
@@ -70,7 +72,7 @@ body {
   color: white;
   text-decoration: none;
   font-weight: bold;
-  padding: 10px 15px;
+  padding: 8px 12px;
   transition: background 0.3s ease;
 }
 
@@ -80,78 +82,103 @@ body {
   color: #cce5ff;
 }
 
+/* Mobile Navigation */
+.mobile-menu-toggle {
+  display: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: white;
+}
+
 /* Headers */
 h1 {
-  padding-right: 70px;
+  padding-right: 0;
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
 }
 
 h2 {
   text-align: center;
   color: #4caf50;
+  font-size: clamp(1.2rem, 4vw, 2rem);
 }
 
 h3 {
   text-align: center;
   color: white;
-  font-size: 25px;
-  padding: 20px;
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  padding: 15px 10px;
 }
 
 /* Current Date Styling */
 p.current-date {
-  font-size: 2rem;
+  font-size: clamp(1.2rem, 4vw, 2rem);
   font-weight: bold;
   background-color: white;
   color: #3797db;
-  padding: 20px 30px;
+  padding: 15px 20px;
   border-radius: 15px;
   text-align: center;
-  margin: 30px auto;
+  margin: 20px auto;
   width: fit-content;
+  max-width: 90%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Income + Month-Year Section */
 .income-month-wrapper {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 30px;
+  gap: 15px;
   margin-top: 20px;
+  flex-wrap: wrap;
 }
 
 .income-month-wrapper .income-box,
 .income-month-wrapper .month-box {
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 15px;
-  padding: 20px 30px;
-  font-size: 1.2rem;
+  padding: 15px 20px;
+  font-size: 1rem;
   color: #333;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
   font-weight: 600;
-  min-width: 200px;
+  min-width: 180px;
   text-align: center;
+  flex: 1;
+  margin-bottom: 10px;
 }
 
 /* Expense Section */
 .exp {
   display: flex;
-  align-content: center;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  height: 300px;
   width: 100%;
+  margin: 20px 0;
 }
 
 .exp_breakdown {
-  width: 1000px;
-  margin-right: 100px;
+  width: 100%;
+  max-width: 1000px;
+  margin-right: 0;
+  margin-bottom: 20px;
 }
 
 .exp_history {
-  margin: 60px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 20px 0;
 }
 
 /* Tables */
+.table-responsive {
+  overflow-x: auto;
+  width: 100%;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -161,11 +188,12 @@ table {
   overflow: hidden;
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(5px);
+  min-width: 500px; /* Ensures table doesn't get too squished */
 }
 
 th,
 td {
-  padding: 12px;
+  padding: 10px 12px;
   text-align: left;
 }
 
@@ -190,6 +218,7 @@ tr:last-child {
 form {
   display: flex;
   flex-direction: column;
+  width: 100%;
   max-width: 300px;
   margin: 0 auto;
   background-color: #f9f9f9;
@@ -233,6 +262,7 @@ input[type="text"] {
   border: 1px solid #c0c0c0;
   border-radius: 5px;
   transition: border 0.3s;
+  width: 100%;
 }
 
 input[type="number"]:focus,
@@ -251,6 +281,7 @@ button {
   cursor: pointer;
   transition: background-color 0.3s;
   margin-bottom: 15px;
+  width: 100%;
 }
 
 button:hover {
@@ -282,12 +313,14 @@ button:hover {
   justify-content: space-around;
   flex-wrap: wrap;
   margin-bottom: 40px;
+  gap: 20px;
 }
 
 .chart-container {
-  width: 45%;
-  margin: 30px auto;
-  padding: 30px;
+  width: 100%;
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -302,14 +335,16 @@ button:hover {
   border-left: 2px solid #333;
   border-bottom: 2px solid #333;
   padding-bottom: 10px;
+  overflow-x: auto;
 }
 
 .bar {
-  width: 40px;
+  width: 30px;
   text-align: center;
   color: white;
   margin: 0 10px;
   position: relative;
+  min-width: 30px;
 }
 
 .bar-saving {
@@ -326,11 +361,15 @@ button:hover {
   color: #333;
   position: absolute;
   bottom: 0;
+  font-size: 0.8rem;
+  width: 100%;
+  text-align: center;
 }
 
 .chart-label {
   margin-top: 5px;
   font-weight: bold;
+  font-size: 0.9rem;
 }
 
 /* Animation Effects */
@@ -382,9 +421,13 @@ h3:nth-of-type(3) {
 /* Container Spacing */
 .container {
   margin-bottom: 30px;
+  padding: 0 10px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 30px;
 }
 
-/* Additional styles for journal/diary look */
+/* Journal/diary styles */
 .journal-container {
   max-width: 800px;
   margin: 30px auto;
@@ -392,6 +435,7 @@ h3:nth-of-type(3) {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  width: 100%;
 }
 
 .journal-title {
@@ -399,7 +443,7 @@ h3:nth-of-type(3) {
   color: #3797db;
   margin-bottom: 20px;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 1.6em;
+  font-size: 1.4em;
   border-bottom: 2px solid #3797db;
   padding-bottom: 10px;
 }
@@ -427,12 +471,15 @@ h3:nth-of-type(3) {
 
 .journal-details {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   margin-top: 10px;
+  gap: 5px;
 }
 
 .journal-income, .journal-expense, .journal-savings {
   flex: 1;
+  min-width: 100px;
   padding: 5px;
   text-align: center;
 }
@@ -463,31 +510,33 @@ h3:nth-of-type(3) {
   color: #666;
   font-size: 0.9em;
 }
-.date-greeting-content h2{
-color: white;
-font-size: 2rem;
+
+.date-greeting-content h2 {
+  color: white;
+  font-size: clamp(1.2rem, 5vw, 2rem);
 }
 
 .income-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 20px;
+  width: 100%;
+}
+
+.income-section, .bonus-section {
+  flex: 1;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: 100%;
 }
 
 .income-section {
-  flex: 1;
   background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .bonus-section {
-  flex: 1;
   background-color: #fff8e1;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   border-left: 4px solid #FFC107;
 }
 
@@ -519,4 +568,85 @@ font-size: 2rem;
   border-top: 1px solid #ddd;
   padding-top: 8px;
   font-weight: bold;
+}
+
+/* Mobile Menu */
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: block;
+  }
+  
+  .nav-links {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background-color: #4caf50;
+    flex-direction: column;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  .nav-links.active {
+    max-height: 300px;
+    padding: 10px 0;
+  }
+  
+  .nav-links li {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .nav-links a {
+    display: block;
+    padding: 12px;
+    width: 100%;
+  }
+}
+
+/* Media Queries */
+@media (min-width: 768px) {
+  .income-container {
+    flex-direction: colu;
+  }
+  
+  .exp {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .exp_breakdown, .exp_history {
+    flex: 1;
+    min-width: 300px;
+  }
+}
+
+@media (max-width: 500px) {
+  body {
+    padding: 70px 10px 10px;
+  }
+  
+  .income-month-wrapper {
+    flex-direction: column;
+  }
+  
+  .income-month-wrapper .income-box,
+  .income-month-wrapper .month-box {
+    width: 100%;
+  }
+  
+  .journal-details {
+    flex-direction: column;
+  }
+  
+  .journal-income, .journal-expense, .journal-savings {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  
+  .nav-title {
+    font-size: 1em;
+  }
 }
