@@ -49,7 +49,7 @@ A simple web-based personal finance tracker built with **HTML**, **CSS**, **PHP*
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/JAIdamodharan/personal-finance-tracker.git
+git clone https://github.com/JAIdamodharan/expense-tracker.git
 ```
 	1.	Import finance.sql into your MySQL database using phpMyAdmin or CLI.
 	2.	Configure database credentials in PHP files (e.g., dashboard.php, login.php, etc.)
