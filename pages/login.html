@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Expense Tracker</title>
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1 class="login-heading">Welcome Back!</h1>
+        <p style="text-align: center; margin-bottom: 20px; color: #666;">Sign in to manage your expenses and take control of your finances</p>
+        
+        <form class="login-form" id="loginForm" novalidate>
+            <div class="form-group">
+                <input type="text" id="name" placeholder="Name" required autocomplete="name">
+                <span class="error-message" id="nameError"></span>
+            </div>
+            
+            <div class="form-group">
+                <input type="email" id="email" placeholder="Email" required autocomplete="email">
+                <span class="error-message" id="emailError"></span>
+            </div>
+            
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+                <span class="error-message" id="passwordError"></span>
+            </div>
+            
+            <button type="submit" class="login-btn" id="loginButton">
+                <span>Login</span>
+                <span class="loading" id="loadingSpinner" style="display: none;"></span>
+            </button>
+            
+            <p class="footer-text">
+                Don't have an account? <a href="register.html">Register here</a>
+            </p>
+        </form>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const nameError = document.getElementById('nameError');
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+            const loginButton = document.getElementById('loginButton');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            // Validation functions
+            function validateName() {
+                if (nameInput.value.trim() === '') {
+                    nameError.textContent = 'Name is required';
+                    return false;
+                } else if (nameInput.value.trim().length < 2) {
+                    nameError.textContent = 'Name must be at least 2 characters';
+                    return false;
+                } else {
+                    nameError.textContent = '';
+                    return true;
+                }
+            }
+            
+            function validateEmail() {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (emailInput.value.trim() === '') {
+                    emailError.textContent = 'Email is required';
+                    return false;
+                } else if (!emailRegex.test(emailInput.value.trim())) {
+                    emailError.textContent = 'Please enter a valid email address';
+                    return false;
+                } else {
+                    emailError.textContent = '';
+                    return true;
+                }
+            }
+            
+            function validatePassword() {
+                if (passwordInput.value.trim() === '') {
+                    passwordError.textContent = 'Password is required';
+                    return false;
+                } else if (passwordInput.value.length < 6) {
+                    passwordError.textContent = 'Password must be at least 6 characters';
+                    return false;
+                } else {
+                    passwordError.textContent = '';
+                    return true;
+                }
+            }
+            
+            // Real-time validation
+            nameInput.addEventListener('blur', validateName);
+            emailInput.addEventListener('blur', validateEmail);
+            passwordInput.addEventListener('blur', validatePassword);
+            
+            // Form submission
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Validate all fields
+                const isNameValid = validateName();
+                const isEmailValid = validateEmail();
+                const isPasswordValid = validatePassword();
+                
+                if (isNameValid && isEmailValid && isPasswordValid) {
+                    // Show loading state
+                    loginButton.disabled = true;
+                    loadingSpinner.style.display = 'inline-block';
+                    
+                    // Get user input
+                    const name = nameInput.value;
+                    const email = emailInput.value;
+                    const password = passwordInput.value;
+                    
+                    // Send data to PHP using Fetch API
+                    fetch("../php/login.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: `name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Reset loading state
+                        loginButton.disabled = false;
+                        loadingSpinner.style.display = 'none';
+                        
+                        if (data.status === "success") {
+                            alert(data.message);
+                            window.location.href = "home.php"; // Redirect on success
+                        } else {
+                            alert(data.message || "Login failed. Please check your credentials.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert("An error occurred while trying to log in. Please try again.");
+                        
+                        // Reset loading state
+                        loginButton.disabled = false;
+                        loadingSpinner.style.display = 'none';
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
