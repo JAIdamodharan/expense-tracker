@@ -185,3 +185,20 @@ input::placeholder {
         max-width: 100%;
     }
 }
+
+@media(max-width: 768px) {
+    .nav-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .nav-links {
+        flex-direction: column;
+        gap: 10px;
+        padding-top: 10px;
+    }
+
+    .container {
+        margin-top: 200px;
+    }
+}

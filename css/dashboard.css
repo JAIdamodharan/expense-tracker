@@ -140,7 +140,7 @@
         @media(max-width: 768px) {
             .nav-content { flex-direction: column; align-items: flex-start; }
             .nav-links { flex-direction: column; gap: 10px; margin-top: 10px; }
-            .dashboard-container { margin: 100px 15px 30px 15px; padding: 25px; }
+            .dashboard-container { margin-top: 300px; padding: 25px; }
             .expense-table th, .expense-table td { font-size: 14px; padding: 10px; }
             .month-selector { flex-direction: column; align-items: center; }
         }
