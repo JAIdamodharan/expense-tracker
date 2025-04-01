@@ -1,0 +1,146 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #4CAF50, #3797db);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0; width: 100%;
+            background-color: #4CAF50;
+            padding: 15px; color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .nav-content {
+            display: flex; justify-content: space-between; align-items: center;
+            max-width: 1200px; margin: 0 auto; padding: 0 20px;
+        }
+
+        .nav-content h1 { font-size: 1rem; }
+
+        .nav-links { list-style: none; display: flex; gap: 20px; }
+        .nav-links a {
+            text-decoration: none; color: white;
+            font-weight: bold; padding: 10px 15px;
+            transition: background 0.3s ease;
+        }
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2); border-radius: 5px;
+        }
+
+        .dashboard-container {
+            max-width: 1000px; margin: 120px auto 40px auto;
+            background: #ffffff; padding: 40px 30px;
+            border-radius: 20px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            color: #333;
+        }
+
+        .dashboard-container h2 {
+            font-size: 2em; color: #4CAF50; text-align: center;
+        }
+
+        .dashboard-container p {
+            font-size: 18px; color: #444; text-align: center; margin-bottom: 30px;
+        }
+
+        .expense-section h3 {
+            font-size: 1.6em; margin-bottom: 20px; color: #3797db; text-align: center;
+        }
+
+        .expense-table {
+            width: 100%; border-collapse: collapse; margin-top: 20px;
+        }
+
+        .expense-table th {
+            background-color: #3797db; color: white;
+            padding: 12px; font-size: 16px; text-align: center;
+        }
+
+        .expense-table td {
+            padding: 12px; text-align: center; border-bottom: 1px solid #ddd;
+            font-size: 15px; color: #333;
+        }
+
+        .expense-table tr:nth-child(even) { background-color: #f2f9ff; }
+        .expense-table tr:hover { background-color: #d0f0c0; }
+
+        .no-expense {
+            text-align: center; margin-top: 20px; font-size: 16px; color: #777;
+        }
+
+        .chart-container {
+            margin: 40px auto;
+            max-width: 90%;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .chart-title {
+            text-align: center;
+            color: #3797db;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+        }
+
+        .month-selector {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .month-button {
+            padding: 8px 16px;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .month-button:hover {
+            background-color: #d0f0c0;
+        }
+
+        .month-button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .category-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .category-table.active {
+            display: table;
+        }
+
+        .category-table th, .category-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .category-table th {
+            background-color: #3797db;
+            color: white;
+        }
+
+        @media(max-width: 768px) {
+            .nav-content { flex-direction: column; align-items: flex-start; }
+            .nav-links { flex-direction: column; gap: 10px; margin-top: 10px; }
+            .dashboard-container { margin: 100px 15px 30px 15px; padding: 25px; }
+            .expense-table th, .expense-table td { font-size: 14px; padding: 10px; }
+            .month-selector { flex-direction: column; align-items: center; }
+        }
