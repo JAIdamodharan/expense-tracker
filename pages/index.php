@@ -156,28 +156,5 @@
             <p>&copy; 2025 ExpenseTracker. All rights reserved.</p>
         </div>
     </footer>
-
-    <script>
-        // Simple script for modal functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('demo');
-            const btn = document.querySelector('.secondary-btn');
-            const closeBtn = document.querySelector('.close-btn');
-            
-            btn.onclick = function() {
-                modal.style.display = 'flex';
-            }
-            
-            closeBtn.onclick = function() {
-                modal.style.display = 'none';
-            }
-            
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            }
-        });
-    </script>
 </body>
 </html>
