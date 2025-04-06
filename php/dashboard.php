@@ -27,7 +27,11 @@ $stmt->bind_result($name, $email);
 $stmt->fetch();
 $stmt->close();
 
-// Fetch user's expense history
+// Get current month and year for filtering
+$current_month = date('m');
+$current_year = date('Y');
+
+// Fetch user's expense history (all records)
 $expenses = [];
 $expense_stmt = $conn->prepare("SELECT type, amount, category, reason, created_at FROM finance WHERE user_id = ? ORDER BY created_at DESC");
 $expense_stmt->bind_param("i", $user_id);
@@ -38,10 +42,21 @@ while ($row = $result->fetch_assoc()) {
 }
 $expense_stmt->close();
 
-// Calculate totals
+// Fetch current month's expenses for summary
+$current_month_expenses = [];
+$current_month_stmt = $conn->prepare("SELECT type, amount, category, reason, created_at FROM finance WHERE user_id = ? AND MONTH(created_at) = ? AND YEAR(created_at) = ? ORDER BY created_at DESC");
+$current_month_stmt->bind_param("iii", $user_id, $current_month, $current_year);
+$current_month_stmt->execute();
+$current_result = $current_month_stmt->get_result();
+while ($row = $current_result->fetch_assoc()) {
+    $current_month_expenses[] = $row;
+}
+$current_month_stmt->close();
+
+// Calculate totals for current month
 $total_income = 0;
 $total_expense = 0;
-foreach ($expenses as $exp) {
+foreach ($current_month_expenses as $exp) {
     if ($exp['type'] === 'income') {
         $total_income += $exp['amount'];
     } elseif ($exp['type'] === 'expense') {
@@ -65,7 +80,7 @@ if ($total_income == 0) {
     $message = "You're breaking even. Consider planning better to increase your savings!";
 }
 
-// Monthly income and expense summary
+// Monthly income and expense summary (for all months)
 $monthly_data = [];
 foreach ($expenses as $exp) {
     $month = date('F Y', strtotime($exp['created_at']));
@@ -79,7 +94,7 @@ foreach ($expenses as $exp) {
     }
 }
 
-// Monthly category breakdown for expenses
+// Monthly category breakdown for expenses (for all months)
 $category_data = [];
 foreach ($expenses as $exp) {
     if ($exp['type'] === 'expense') {
@@ -132,6 +147,184 @@ foreach ($all_categories as $category) {
 
 $categoryDatasets = json_encode($categoryDatasets);
 
+// Define needs and wants categories
+$needs_categories = [
+    'Housing' => 'Rent, mortgage payments, property taxes, and home repairs',
+    'Utilities' => 'Electricity, water, gas, internet, and phone services',
+    'Groceries' => 'Essential food and household supplies',
+    'Transportation' => 'Car payments, fuel, public transit, or ride-sharing services',
+    'Healthcare' => 'Insurance premiums, medications, and necessary medical visits',
+    'Insurance' => 'Health, auto, home/renters, and life insurance',
+    'Education' => 'School tuition, books, and required educational supplies',
+    'Debt' => 'Minimum payments on loans and credit cards',
+    'Rent' => 'Monthly rent payments'
+];
+
+$wants_categories = [
+    'Entertainment' => 'Movies, concerts, events, books, and games',
+    'Dining' => 'Restaurants, cafes, and takeout food',
+    'Shopping' => 'Clothing (beyond basics), electronics, and non-essential items',
+    'Travel' => 'Vacations, weekend getaways, and recreational trips',
+    'Hobbies' => 'Sports equipment, crafting supplies, and hobby-related expenses',
+    'Subscription' => 'Streaming services, magazines, and non-essential subscriptions',
+    'Personal' => 'Salon visits, spa treatments, and non-essential personal care',
+    'Food' => 'Dining out, takeout, and non-essential food items'
+];
+
+// Add this function to calculate budget recommendations
+function getBudgetRecommendations($expenses, $total_income, $total_expense, $savings) {
+    $recommendations = [];
+    $categories = [];
+    $category_totals = [];
+    $category_percentages = [];
+    
+    // Calculate spending by category
+    foreach ($expenses as $exp) {
+        if ($exp['type'] === 'expense') {
+            $category = $exp['category'];
+            if (!isset($category_totals[$category])) {
+                $category_totals[$category] = 0;
+                $categories[] = $category;
+            }
+            $category_totals[$category] += $exp['amount'];
+        }
+    }
+    
+    // Calculate percentages of total expenses
+    foreach ($category_totals as $category => $amount) {
+        $category_percentages[$category] = ($total_expense > 0) ? ($amount / $total_expense) * 100 : 0;
+    }
+    
+    // Standard budget allocation recommendations (50/30/20 rule)
+    $ideal_needs = 0.5 * $total_income; // 50% for needs
+    $ideal_wants = 0.3 * $total_income; // 30% for wants
+    $ideal_savings = 0.2 * $total_income; // 20% for savings
+    
+    // Categorize spending into needs, wants, and savings
+    $needs_categories = ['Housing', 'Utilities', 'Groceries', 'Transportation', 'Healthcare', 'Insurance', 'Education', 'Debt', 'Rent'];
+    $wants_categories = ['Entertainment', 'Dining', 'Shopping', 'Travel', 'Hobbies', 'Subscription', 'Personal', 'Food'];
+    
+    $current_needs = 0;
+    $current_wants = 0;
+    
+    foreach ($category_totals as $category => $amount) {
+        $lower_category = strtolower($category);
+        
+        // Check if category is in needs or wants
+        $is_need = false;
+        foreach ($needs_categories as $need) {
+            if (strpos($lower_category, strtolower($need)) !== false) {
+                $is_need = true;
+                break;
+            }
+        }
+        
+        if ($is_need) {
+            $current_needs += $amount;
+        } else {
+            $current_wants += $amount;
+        }
+    }
+    
+    // Generate recommendations
+    $recommendations[] = [
+        'title' => '50/30/20 Budget Rule',
+        'description' => 'A popular budgeting strategy that allocates 50% for needs, 30% for wants, and 20% for savings.',
+        'current' => [
+            'needs' => [
+                'amount' => $current_needs,
+                'percentage' => ($total_income > 0) ? ($current_needs / $total_income) * 100 : 0
+            ],
+            'wants' => [
+                'amount' => $current_wants,
+                'percentage' => ($total_income > 0) ? ($current_wants / $total_income) * 100 : 0
+            ],
+            'savings' => [
+                'amount' => $savings,
+                'percentage' => ($total_income > 0) ? ($savings / $total_income) * 100 : 0
+            ]
+        ],
+        'recommended' => [
+            'needs' => [
+                'amount' => $ideal_needs,
+                'percentage' => 50
+            ],
+            'wants' => [
+                'amount' => $ideal_wants,
+                'percentage' => 30
+            ],
+            'savings' => [
+                'amount' => $ideal_savings,
+                'percentage' => 20
+            ]
+        ]
+    ];
+    
+    // Identify categories where spending might be too high
+    $high_spending_categories = [];
+    $category_benchmarks = [
+        'Housing' => 30, // 30% of income is common benchmark
+        'Food' => 15,    // 10-15% of income
+        'Transportation' => 15, // 10-15% of income
+        'Entertainment' => 10, // 5-10% of income
+        'Utilities' => 10, // 5-10% of income
+        'Shopping' => 5,  // 5% of income
+        'Healthcare' => 10, // 5-10% of income
+        'Debt' => 15,     // 15% max recommended
+        'Rent' => 30     // 30% max recommended
+    ];
+    
+    foreach ($category_totals as $category => $amount) {
+        $percentage_of_income = ($total_income > 0) ? ($amount / $total_income) * 100 : 0;
+        
+        // Check against benchmarks
+        foreach ($category_benchmarks as $benchmark_category => $max_percentage) {
+            if (strpos(strtolower($category), strtolower($benchmark_category)) !== false) {
+                if ($percentage_of_income > $max_percentage) {
+                    $high_spending_categories[] = [
+                        'category' => $category,
+                        'current_percentage' => $percentage_of_income,
+                        'recommended_percentage' => $max_percentage,
+                        'current_amount' => $amount,
+                        'recommended_amount' => ($max_percentage / 100) * $total_income,
+                        'potential_savings' => $amount - (($max_percentage / 100) * $total_income)
+                    ];
+                }
+                break;
+            }
+        }
+    }
+    
+    // Generate specific category recommendations
+    if (!empty($high_spending_categories)) {
+        $recommendations[] = [
+            'title' => 'Category-Specific Recommendations',
+            'categories' => $high_spending_categories
+        ];
+    }
+    
+    // Add emergency fund recommendation if savings are low
+    $savings_percentage = ($total_income > 0) ? ($savings / $total_income) * 100 : 0;
+    if ($savings_percentage < 10) {
+        $emergency_fund_goal = $total_income * 3; // 3 months of income as emergency fund
+        $recommendations[] = [
+            'title' => 'Emergency Fund Goal',
+            'description' => 'Aim to save 3-6 months of expenses for emergencies.',
+            'goal_amount' => $emergency_fund_goal,
+            'current_savings' => $savings,
+            'percentage_complete' => ($emergency_fund_goal > 0) ? min(100, ($savings / $emergency_fund_goal) * 100) : 0
+        ];
+    }
+    
+    return $recommendations;
+}
+
+// Calculate budget recommendations based on current month's data
+$budget_recommendations = getBudgetRecommendations($current_month_expenses, $total_income, $total_expense, $savings);
+
+// Get current month name for display
+$current_month_name = date('F Y');
+
 $conn->close();
 ?>
 
@@ -143,6 +336,59 @@ $conn->close();
     <title>Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="../css/dashboard.css">
+    <style>
+        /* Additional CSS for Needs vs Wants section */
+        .needs-wants-container {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .needs-wants-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .category-columns {
+            display: flex;
+            gap: 20px;
+        }
+        .category-column {
+            flex: 1;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+        .category-column h4 {
+            color: #3797db;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        .category-item {
+            margin-bottom: 12px;
+        }
+        .category-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        .category-desc {
+            color: #666;
+            font-size: 14px;
+        }
+        .info-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #3797db;
+            padding: 12px;
+            margin-top: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -194,11 +440,44 @@ $conn->close();
             <?php endif; ?>
 
             <div class="summary-box" style="margin-top: 40px; padding: 25px; background: #e3f2fd; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
-                <h3 style="color: #3797db; margin-bottom: 20px;">Financial Summary</h3>
+                <h3 style="color: #3797db; margin-bottom: 20px;">Financial Summary for <?php echo $current_month_name; ?></h3>
                 <p style="font-size: 18px; color: #333;"><strong>Total Income:</strong> ₹<?php echo number_format($total_income, 2); ?></p>
                 <p style="font-size: 18px; color: #333;"><strong>Total Expenditure:</strong> ₹<?php echo number_format($total_expense, 2); ?></p>
                 <p style="font-size: 18px; color: #333;"><strong>Savings:</strong> ₹<?php echo number_format($savings, 2); ?></p>
                 <p style="font-size: 18px; color: <?php echo ($savings >= 0) ? '#2e7d32' : '#d32f2f'; ?>; font-weight: bold; margin-top: 20px;"><?php echo $message; ?></p>
+            </div>
+        </div>
+
+        <!-- New Needs vs Wants Section -->
+        <div class="needs-wants-container">
+            <h3 class="needs-wants-title">Understanding Needs vs. Wants</h3>
+            <p>The 50/30/20 budget rule relies on understanding the difference between "needs" and "wants". Here's how we categorize your expenses:</p>
+            
+            <div class="category-columns">
+                <div class="category-column">
+                    <h4>Needs (Essential Expenses - 50%)</h4>
+                    <?php foreach ($needs_categories as $category => $description): ?>
+                        <div class="category-item">
+                            <div class="category-name"><?php echo $category; ?></div>
+                            <div class="category-desc"><?php echo $description; ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                
+                <div class="category-column">
+                    <h4>Wants (Discretionary Expenses - 30%)</h4>
+                    <?php foreach ($wants_categories as $category => $description): ?>
+                        <div class="category-item">
+                            <div class="category-name"><?php echo $category; ?></div>
+                            <div class="category-desc"><?php echo $description; ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <p><strong>Note:</strong> When categorizing your expenses, our system automatically identifies "needs" and "wants" based on the expense category you select. You can improve your budget by being mindful of how you categorize expenses and focusing on reducing non-essential spending.</p>
+                <p>The remaining 20% of your income should go towards savings, debt payments above the minimum, investments, and building your emergency fund.</p>
             </div>
         </div>
 
@@ -253,6 +532,149 @@ $conn->close();
                 <?php endforeach; ?>
             <?php else: ?>
                 <p class="no-expense">No expense categories to display.</p>
+            <?php endif; ?>
+        </div>
+
+        <div class="chart-container" style="margin-top: 40px;">
+            <h3 class="chart-title">Budget Recommendations for <?php echo $current_month_name; ?></h3>
+            
+            <?php if ($total_income > 0 && $total_expense > 0): ?>
+                <!-- 50/30/20 Rule Visualization -->
+                <div class="recommendation-box">
+                    <h4><?php echo $budget_recommendations[0]['title']; ?></h4>
+                    <p><?php echo $budget_recommendations[0]['description']; ?></p>
+                    
+                    <div class="budget-comparison">
+                        <div class="budget-column">
+                            <h5>Your Current Budget Allocation</h5>
+                            <div class="progress-container">
+                                <div class="progress-label">Needs</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: <?php echo min(100, $budget_recommendations[0]['current']['needs']['percentage']); ?>%; background-color: #3797db;">
+                                        <?php echo number_format($budget_recommendations[0]['current']['needs']['percentage'], 1); ?>%
+                                    </div>
+                                </div>
+                                <div class="progress-amount">₹<?php echo number_format($budget_recommendations[0]['current']['needs']['amount'], 2); ?></div>
+                            </div>
+                            
+                            <div class="progress-container">
+                                <div class="progress-label">Wants</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: <?php echo min(100, $budget_recommendations[0]['current']['wants']['percentage']); ?>%; background-color: #ff9800;">
+                                        <?php echo number_format($budget_recommendations[0]['current']['wants']['percentage'], 1); ?>%
+                                    </div>
+                                </div>
+                                <div class="progress-amount">₹<?php echo number_format($budget_recommendations[0]['current']['wants']['amount'], 2); ?></div>
+                            </div>
+                            
+                            <div class="progress-container">
+                                <div class="progress-label">Savings</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: <?php echo min(100, $budget_recommendations[0]['current']['savings']['percentage']); ?>%; background-color: #4CAF50;">
+                                        <?php echo number_format($budget_recommendations[0]['current']['savings']['percentage'], 1); ?>%
+                                    </div>
+                                </div>
+                                <div class="progress-amount">₹<?php echo number_format($budget_recommendations[0]['current']['savings']['amount'], 2); ?></div>
+                            </div>
+                        </div>
+                        
+                        <div class="budget-column">
+                            <h5>Recommended Budget Allocation</h5>
+                            <div class="progress-container">
+                                <div class="progress-label">Needs (50%)</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 50%; background-color: #3797db;">
+                                        50%
+                                    </div>
+                                </div>
+                                <div class="progress-amount">₹<?php echo number_format($budget_recommendations[0]['recommended']['needs']['amount'], 2); ?></div>
+                            </div>
+                            
+                            <div class="progress-container">
+                                <div class="progress-label">Wants (30%)</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 30%; background-color: #ff9800;">
+                                        30%
+                                    </div>
+                                </div>
+                                <div class="progress-amount">₹<?php echo number_format($budget_recommendations[0]['recommended']['wants']['amount'], 2); ?></div>
+                            </div>
+                            
+                            <div class="progress-container">
+                                <div class="progress-label">Savings (20%)</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 20%; background-color: #4CAF50;">
+                                        20%
+                                    </div>
+                                </div>
+                                <div class="progress-amount">₹<?php echo number_format($budget_recommendations[0]['recommended']['savings']['amount'], 2); ?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Category-Specific Recommendations -->
+                <?php if (isset($budget_recommendations[1])): ?>
+                <div class="recommendation-box">
+                    <h4><?php echo $budget_recommendations[1]['title']; ?></h4>
+                    
+                    <table class="recommendation-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Current Spending</th>
+                                <th>Recommended Spending</th>
+                                <th>Potential Savings</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($budget_recommendations[1]['categories'] as $category): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($category['category']); ?></td>
+                                <td>
+                                    ₹<?php echo number_format($category['current_amount'], 2); ?>
+                                    <div class="small-text"><?php echo number_format($category['current_percentage'], 1); ?>% of income</div>
+                                </td>
+                                <td>
+                                    ₹<?php echo number_format($category['recommended_amount'], 2); ?>
+                                    <div class="small-text"><?php echo number_format($category['recommended_percentage'], 1); ?>% of income</div>
+                                </td>
+                                <td class="savings-cell">₹<?php echo number_format($category['potential_savings'], 2); ?></td>
+                                <td class="action-cell">
+                                    <?php 
+                                    $reduction = number_format(($category['current_percentage'] - $category['recommended_percentage']), 1);
+                                    echo "Reduce by {$reduction}%";
+                                    ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php endif; ?>
+                
+                <!-- Emergency Fund Recommendation -->
+                <?php if (isset($budget_recommendations[2])): ?>
+                <div class="recommendation-box">
+                    <h4><?php echo $budget_recommendations[2]['title']; ?></h4>
+                    <p><?php echo $budget_recommendations[2]['description']; ?></p>
+                    
+                    <div class="fund-progress">
+                        <div class="fund-details">
+                            <div>Current: ₹<?php echo number_format($budget_recommendations[2]['current_savings'], 2); ?></div>
+                            <div>Goal: ₹<?php echo number_format($budget_recommendations[2]['goal_amount'], 2); ?></div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: <?php echo $budget_recommendations[2]['percentage_complete']; ?>%; background-color: #4CAF50;">
+                                <?php echo number_format($budget_recommendations[2]['percentage_complete'], 1); ?>%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+            <?php else: ?>
+                <p class="no-expense">Add income and expenses to get budget recommendations.</p>
             <?php endif; ?>
         </div>
     </div>
