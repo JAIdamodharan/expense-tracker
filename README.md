@@ -94,7 +94,17 @@ Profile Page for each user
 Financial Summary for the current month
 <img width="1440" alt="image" src="https://github.com/user-attachments/assets/b9682a5b-5588-4099-8f90-7d85807d9458" />
 
+Needs Vs Wants 
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/b1c5b941-46d8-4c57-833d-77574c7117d7" />
 
+Monthly Expenses Chart 
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/063941be-dfb5-42e6-83b2-dbaf3f43b1c5" />
+
+Category wise monthly expense 
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/e48120ff-2d60-42a3-9875-8218ca14cd83" />
+
+Personalized Budget Recommedations for every user 
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/778ce276-d514-42d5-be67-7a6149956116" />
 
 ---
 
