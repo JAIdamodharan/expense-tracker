@@ -44,6 +44,12 @@ A simple web-based personal finance tracker built with **HTML**, **CSS**, **PHP*
 | created_at | TIMESTAMP    |
 
 ---
+Screenshots
+
+Index.png
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/872b868e-b806-4846-9f54-f2ca21e6c410" />
+
+---
 
 ## ⚙️ Setup Instructions
 
