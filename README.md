@@ -32,6 +32,13 @@ A simple web-based personal finance tracker built with **HTML**, **CSS**, **PHP*
 | email      | VARCHAR      |
 | password   | VARCHAR      |
 
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
+    password VARCHAR(255)
+);
+
 ### `finance` Table:
 | Column     | Type         |
 |------------|--------------|
@@ -42,6 +49,17 @@ A simple web-based personal finance tracker built with **HTML**, **CSS**, **PHP*
 | category   | VARCHAR      |
 | reason     | TEXT         |
 | created_at | TIMESTAMP    |
+
+CREATE TABLE finance (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    type ENUM('income', 'expense'),
+    amount DECIMAL(10,2),
+    category VARCHAR(100),
+    reason TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
 ---
 Screenshots
